@@ -1,23 +1,28 @@
 import axios from "axios";
-import cookie from "cookie.js";
-import { jwtDecode } from "jwt-decode";
+import cookie from "js-cookie";
+import {jwtDecode} from "jwt-decode";
 
-// Fungsi untuk mendapatkan nilai token dari localStorage
-// const token: any = cookie.get("token");
-// const tokenDecode = jwtDecode(token);
+// Function to get the token from cookies
+const token: string = cookie.get("token") || "";
+const tokenDecode: string = atob(token);
 
-// Axios instances for API
+// Decode the token if it exists
+// const tokenDecoded = tokenDecode ? jwtDecode(tokenDecode) : null;
+// Axios instance for API without headers
 export const API = axios.create({
   baseURL: import.meta.env.VITE_PUBLIC_API + `/api/v1/`,
 });
 
-// export const API_Header = axios.create({
-//   baseURL: import.meta.env.VITE_PUBLIC_API + `/api/v1/`,
-//   headers: {
-//     Authorization: `Bearer ${tokenDecode}`,
-//     "Content-type": "multipart/form-data",
-//   },
-// });
+// Axios instance for API with Authorization headers
+export const API_Header = axios.create({
+  baseURL: import.meta.env.VITE_PUBLIC_API + `/api/v1/`,
+  headers: {
+    Authorization: tokenDecode ? `Bearer ${tokenDecode}` : "",
+    "Content-type": "multipart/form-data",
+    Accept: "application/json",
+  },
+});
 
+// Export base URL for images or other uses
 export const imgUrl = import.meta.env.VITE_IMG_BASE_URL;
 export const baseUrl = import.meta.env.VITE_IMG_BASE_URL;

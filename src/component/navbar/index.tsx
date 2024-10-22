@@ -1,15 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
-import avatar from "../../assets/navbar/avatar.png";
 import { IoIosArrowDown } from "react-icons/io";
+import cookie from "cookie.js";
+import { jwtDecode } from "jwt-decode";
+import { userData } from "../../dataTypes";
+import { API_Header } from "../../libs";
+
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [userData, setUserData] = useState<userData>({
+    name: "",
+    email: "",
+    id: 0,
+    role: "",
+  });
+ const encodedToken = cookie.get("token") || "";
+ let token = "";
+   // Decode the token only if it is not empty
+   if (encodedToken) {
+    try {
+      token = atob(encodedToken); // Decode the Base64 encoded token
+    } catch (error) {
+      console.error("Failed to decode base64 token:", error);
+    }
+  }
+   // Decode the JWT only if the token is valid
+   let userDataDecode: any = null;
+   if (token && token.split(".").length === 3) {
+     try {
+       userDataDecode = jwtDecode(token);
+     } catch (error) {
+       console.error("Failed to decode JWT token:", error);
+     }
+   }
 
-  const handleLogout = () => {
-    // Logika untuk logout, misalnya menghapus token autentikasi, redirect, dll.
-    console.log("Logged out");
+  const handleLogout = async () => {
+    try {
+      await API_Header.post("/auth/logout");
+  
+      cookie.remove("token");
+      window.location.href = "/";
+    } catch (error) {
+      return error;
+    }
   };
+
+  useEffect(() => {
+    if (userDataDecode) {
+      setUserData(userDataDecode);
+    }
+  }, []);
 
   return (
     <div className="h-[80px] bg-orenPos w-full">
@@ -79,9 +120,9 @@ export default function Navbar() {
 
                 {/* Text Content */}
                 <div className="flex-1 pr-5">
-                  <div className="text-white font-semibold">Dm_Jakpus</div>
+                  <div className="text-white font-semibold">{userData.role}</div>
                   <div className=" font-normal text-sm text-orange-500">
-                    dmjakpus@gmail.com
+                    {userData.email}
                   </div>
                 </div>
                 <div className="relative">

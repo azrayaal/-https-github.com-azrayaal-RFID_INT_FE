@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { API } from "../../libs";
 import nodata from "../../../public/nodata.png"
 import { LoadingData } from "../../dataTypes";
-
-
+import { API } from "../../libs";
 
 export default function Loading() {
   const [loadingData, setLoadingData] = useState<LoadingData[]>([]);
@@ -23,7 +21,7 @@ export default function Loading() {
   }, []);
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="min-h-screen p-8 bg-gray-300">
       {/* Header Section */}
       <h1 className="text-3xl font-bold mb-6 text-center">Dashboard Outbound</h1>
 
@@ -96,7 +94,7 @@ export default function Loading() {
                       alt="No Data"
                       className="w-40 mb-4"
                     />
-                    <span className="text-gray-500">Tidak ada data</span>
+                    <span className="text-gray-500">no data found</span>
                   </div>
                 </td>
               </tr>

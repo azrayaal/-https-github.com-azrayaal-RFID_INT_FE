@@ -61,3 +61,10 @@ export interface LoadingData {
   scanned_at: string;
   id: number;
   }
+
+  export interface userData {
+    name: string;
+    email: string;
+    id: number;
+    role: string;
+  }
