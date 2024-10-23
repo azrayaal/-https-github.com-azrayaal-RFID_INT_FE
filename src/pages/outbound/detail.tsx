@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { API_Header } from '../../libs'; // Pastikan path ini sesuai dengan lokasi file API_Header Anda
 import { receiving } from '../../dataTypes';
 
-export default function DetailInbound() {
+export default function DetailOutbound() {
   const { id } = useParams(); // Mendapatkan id dari parameter URL
   const [detail, setDetail] = useState<receiving>({
     BagID: '',
@@ -22,7 +22,7 @@ export default function DetailInbound() {
   // Fungsi untuk mengambil detail inbound berdasarkan ID
   const fetchDetail = async () => {
     try {
-      const response = await API_Header.get(`/receive/${id}`);
+      const response = await API_Header.get(`/loading/${id}`);
       setDetail(response.data.data);
       console.log(response)
     } catch (err) {
@@ -43,7 +43,7 @@ export default function DetailInbound() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Detail Inbound - {detail.BagID}</h2>
+      <h2 className="text-2xl font-semibold mb-4">Detail Outbound - {detail.BagID}</h2>
       <div className="bg-white shadow rounded p-4">
         <p><strong>Bag ID:</strong> {detail.BagID}</p>
         <p><strong>Bag Weight:</strong> {detail.weight} kg</p>

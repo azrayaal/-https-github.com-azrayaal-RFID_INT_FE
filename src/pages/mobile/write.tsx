@@ -1,15 +1,18 @@
 import { useState } from 'react';
-import { API } from '../../libs';
+import { API, API_Header } from '../../libs';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 export default function Write() {
   const [formData, setFormData] = useState({
-    TID: '',
     EPC: '',
+    PID: '',
     item_name: '',
     quantity: 1,
     item_description: '',
+    weight: '',
+    seal_number: '',
+    destinationId: '',
     updatedBy: 1,
     last_location_id: 1,
   });
@@ -28,7 +31,7 @@ export default function Write() {
   const handleSubmit = async (e: any) => {
     e.preventDefault(); // Prevent the default form submission
     try {
-      const res = await API.post('/rfid-tags', formData);
+      const res = await API_Header.post('/rfid-tags', formData);
       if (res.data.status === 'success') {
         toast.success('Form Data Submitted Successfully!');
         setTimeout(() => {
@@ -48,26 +51,26 @@ export default function Write() {
       <h1>Write Form</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>TID: </label>
+          <label>EPC: </label>
           <input
             className="bg-orange-300"
             type="text"
-            name="TID"
-            value={formData.TID}
+            name="EPC"
+            value={formData.EPC}
             onChange={handleChange}
           />
         </div>
 
         {/* Only show the rest of the form if TID is filled */}
-        {formData.TID && (
+        {formData.EPC && (
           <>
             <div>
-              <label>EPC: </label>
+              <label>PID: </label>
               <input
                 className="bg-orange-300"
                 type="text"
-                name="EPC"
-                value={formData.EPC}
+                name="PID"
+                value={formData.PID}
                 onChange={handleChange}
               />
             </div>
@@ -106,26 +109,39 @@ export default function Write() {
             </div>
 
             <div>
-              <label>Updated By: </label>
+              <label>Weight: </label>
               <input
                 className="bg-orange-300"
                 type="number"
-                name="updatedBy"
-                value={formData.updatedBy}
+                name="weight"
+                value={formData.weight}
                 onChange={handleChange}
               />
             </div>
 
             <div>
-              <label>Last Location ID: </label>
+              <label>Seal Number: </label>
               <input
                 className="bg-orange-300"
-                type="number"
-                name="last_location_id"
-                value={formData.last_location_id}
+                type="text"
+                name="seal_number"
+                value={formData.seal_number}
                 onChange={handleChange}
               />
             </div>
+
+            <div>
+              <label>Destination ID: </label>
+              <input
+                className="bg-orange-300"
+                type="number"
+                name="destinationId"
+                value={formData.destinationId}
+                onChange={handleChange}
+              />
+            </div>
+
+
 
             <button type="submit" className="bg-blue-500">Submit</button>
           </>

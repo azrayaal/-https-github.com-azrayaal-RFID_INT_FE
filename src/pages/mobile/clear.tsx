@@ -1,31 +1,30 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { API } from '../../libs';
+import {  API_Header } from '../../libs';
+import { useNavigate } from 'react-router-dom';
 
 export default function Clear() {
-  const [TID, setTID] = useState('');
-  const [updatedBy, setUpdatedBy] = useState(1); // Default updatedBy = 1, bisa diubah sesuai kebutuhan
+  const [EPC, setEPC] = useState('');
 
   // Function to handle input changes
-  const handleChangeTID = (e: any) => {
-    setTID(e.target.value);
+  const handleChangeEPC = (e: any) => {
+    setEPC(e.target.value);
   };
 
-  const handleChangeUpdatedBy = (e: any) => {
-    setUpdatedBy(e.target.value);
-  };
-
+  const navigate = useNavigate();
   // Function to handle form submission (POST request to clear RFID data)
   const handleClear = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await API.post(`/rfid-tags/clear`, {
-        TID: TID,
-        updatedBy: updatedBy,
+      const res = await API_Header.post(`/rfid-tags/clear`, {
+        EPC: EPC,
       });
 
       if (res.data.status === 'success') {
         toast.success('RFID Tag Cleared Successfully!');
+        setTimeout(() => {
+          navigate('/scan');
+        }, 3000);
       } else {
         toast.error(`Failed to clear RFID tag: ${res.data.message}`);
       }
@@ -40,24 +39,13 @@ export default function Clear() {
       <h1>Clear RFID Tag</h1>
       <form onSubmit={handleClear}>
         <div>
-          <label>TID: </label>
+          <label>EPC: </label>
           <input
             className="bg-orange-300"
             type="text"
-            name="TID"
-            value={TID}
-            onChange={handleChangeTID}
-          />
-        </div>
-
-        <div>
-          <label>Updated By: </label>
-          <input
-            className="bg-orange-300"
-            type="number"
-            name="updatedBy"
-            value={updatedBy}
-            onChange={handleChangeUpdatedBy}
+            name="EPC"
+            value={EPC}
+            onChange={handleChangeEPC}
           />
         </div>
 

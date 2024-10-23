@@ -38,7 +38,7 @@ export default function Sidebar() {
       }`}
     >
       <div
-        className="mb-4 p-2 flex justify-center items-center bg-orenPos rounded-r-lg outline-none focus:outline-none hover:outline-none active:outline-none cursor-pointer"
+        className="mb-4 p-2 flex justify-center items-center bg-orenPos rounded-r-full outline-none focus:outline-none hover:outline-none active:outline-none cursor-pointer"
         onClick={toggleSidebar}
       >
         {isCollapsed ? (
@@ -53,7 +53,7 @@ export default function Sidebar() {
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
-            } rounded-r-lg  cursor-pointer`}
+            } rounded-r-full  cursor-pointer`}
             onClick={useHome}
           >
               <span className="mr-3">
@@ -64,7 +64,7 @@ export default function Sidebar() {
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/receiving") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
-            } rounded-r-lg  cursor-pointer`}
+            } rounded-r-full  cursor-pointer`}
             onClick={useInbound}
           >
               <span className="mr-3">
@@ -75,7 +75,7 @@ export default function Sidebar() {
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/loading") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
-            } rounded-r-lg  cursor-pointer`}
+            } rounded-r-full  cursor-pointer`}
             onClick={useOutbound}
           >
               <span className="mr-3">
@@ -86,7 +86,7 @@ export default function Sidebar() {
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/scan") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
-            } rounded-r-lg  cursor-pointer`}
+            } rounded-r-full  cursor-pointer`}
             onClick={useScan}
           >
               <span className="mr-3">

@@ -11,6 +11,7 @@ const getReceiving = async() => {
   try {
     const res = await API_Header.get('/receive')
     setReceiving(res.data.data)
+    console.log(res)
   } catch (error) {
     console.log(error)
   }}
@@ -45,7 +46,7 @@ const getReceiving = async() => {
     <input
       type="text"
       placeholder="Search by Bag ID"
-      className="w-full p-2 border rounded-md shadow focus:outline-none focus:ring-2 focus:ring-orange-500 text-black bg-gray-300"
+      className="w-full p-2 border rounded-md shadow focus:outline-none focus:ring-2 focus:ring-orenPos text-black bg-gray-300"
     />
   </div>
 
@@ -90,7 +91,7 @@ const getReceiving = async() => {
                   {data.BagID}
                 </td>
                 <td className="px-4 py-2 border-r border-l border-gray-500">
-                  {data.bag_weight} kg
+                  {data.weight} kg
                 </td>
                 <td className="px-4 py-2 border-r border-l border-gray-500">
                   {data.total}

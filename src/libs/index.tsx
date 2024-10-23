@@ -18,7 +18,8 @@ export const API_Header = axios.create({
   baseURL: import.meta.env.VITE_PUBLIC_API + `/api/v1/`,
   headers: {
     Authorization: tokenDecode ? `Bearer ${tokenDecode}` : "",
-    "Content-type": "multipart/form-data",
+    // "Content-type": "multipart/form-data",
+    "Content-Type": "application/json",
     Accept: "application/json",
   },
 });

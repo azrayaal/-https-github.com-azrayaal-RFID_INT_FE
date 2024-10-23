@@ -72,6 +72,8 @@ import Login from "./pages/auth";
 import { PrivateRoute } from "./hooks/privateRoute";
 import ScanInbound from "./pages/inbound/scan";
 import DetailInbound from "./pages/inbound/detail";
+import DetailOutbound from "./pages/outbound/detail";
+import ScanOutbound from "./pages/outbound/scan";
 
 function App() {
   return (
@@ -89,7 +91,9 @@ function App() {
               <Route path="/loading" element={<Loading />} />
               <Route path="/receiving" element={<Receiving />} />
               <Route path="/receiving/:id" element={<DetailInbound />} />
+              <Route path="/loading/:id" element={<DetailOutbound />} />
               <Route path="/scan/inbound" element={<ScanInbound />} />
+              <Route path="/scan/outbound" element={<ScanOutbound />} />
               <Route path="/scan" element={<ScanTag />} />
               {/* RFID */}
               <Route path="/read" element={<Read />} />

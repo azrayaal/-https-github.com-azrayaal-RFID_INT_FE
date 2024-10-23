@@ -1,24 +1,23 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { API } from '../../libs';
+import { API, API_Header } from '../../libs';
 import { RfidTag } from '../../dataTypes';
 
-
-
 export default function Read() {
-  const [TID, setTID] = useState('');
-  const [rfidData, setRfidData] = useState<RfidTag | null>(null); // State for fetched data
+  const [EPC, setEPC] = useState('');
+  const [rfidData, setRfidData] = useState<RfidTag | null>(null);
 
   // Function to handle input changes
   const handleChange = (e: any) => {
-    setTID(e.target.value);
+    setEPC(e.target.value);
   };
 
   // Function to handle form submission
   const handleRead = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await API.post(`/rfid-tags/read`, { TID: TID });
+      const res = await API_Header.post(`/rfid-tags/read`, { EPC });
+      console.log(res)
       if (res.data.status === 'success') {
         setRfidData(res.data.data);
         toast.success(`${res.data.message}`);
@@ -36,12 +35,12 @@ export default function Read() {
       <h1>Read RFID Tag</h1>
       <form onSubmit={handleRead}>
         <div>
-          <label>TID: </label>
+          <label>EPC: </label>
           <input
             className="bg-orange-300"
             type="text"
-            name="TID"
-            value={TID}
+            name="EPC"
+            value={EPC}
             onChange={handleChange}
           />
         </div>
@@ -63,12 +62,12 @@ export default function Read() {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2">TID</td>
-                  <td className="border px-4 py-2">{rfidData.TID}</td>
-                </tr>
-                <tr>
                   <td className="border px-4 py-2">EPC</td>
                   <td className="border px-4 py-2">{rfidData.EPC}</td>
+                </tr>
+                <tr>
+                  <td className="border px-4 py-2">PID</td>
+                  <td className="border px-4 py-2">{rfidData.PID}</td>
                 </tr>
                 <tr>
                   <td className="border px-4 py-2">Item Name</td>
@@ -79,24 +78,24 @@ export default function Read() {
                   <td className="border px-4 py-2">{rfidData.quantity}</td>
                 </tr>
                 <tr>
+                  <td className="border px-4 py-2">Weight</td>
+                  <td className="border px-4 py-2">{rfidData.weight}</td>
+                </tr>
+                <tr>
                   <td className="border px-4 py-2">Item Description</td>
                   <td className="border px-4 py-2">{rfidData.item_description}</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2">Last Location Name</td>
-                  <td className="border px-4 py-2">{rfidData.last_location_name}</td>
+                  <td className="border px-4 py-2">seal number</td>
+                  <td className="border px-4 py-2">{rfidData.seal_number}</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2">Last Location Address</td>
-                  <td className="border px-4 py-2">{rfidData.last_location_address}</td>
+                  <td className="border px-4 py-2">location</td>
+                  <td className="border px-4 py-2">{rfidData.location.name}</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2">Updated By</td>
-                  <td className="border px-4 py-2">{rfidData.updated_by}</td>
-                </tr>
-                <tr>
-                  <td className="border px-4 py-2">Updated By Contact</td>
-                  <td className="border px-4 py-2">{rfidData.updated_by_contact}</td>
+                  <td className="border px-4 py-2">updated by</td>
+                  <td className="border px-4 py-2">{rfidData.updated_by.name}</td>
                 </tr>
               </tbody>
             </table>
