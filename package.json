@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "cookie.js": "^7.0.1",
+    "http-proxy-middleware": "^3.0.3",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "light-date": "^1.2.0",

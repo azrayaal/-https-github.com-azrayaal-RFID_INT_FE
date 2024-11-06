@@ -53,6 +53,7 @@
 
   export interface receiving {
     BagID: string;
+    PID: string;
   weight: string;
   total: number;
   receiver_name: string;
@@ -65,6 +66,7 @@
   export interface LoadingData {
     BagID: string;
   weight: string;
+  PID: string;
   total: number;
   receiver_name: string;
   receiver_contact: string;

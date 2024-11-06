@@ -61,6 +61,7 @@ const getReceiving = async() => {
             <tr className="border-t-2 border-white bg-orange-500">
               <th className="px-4 py-2 border border-gray-200">No</th>
               <th className="px-4 py-2 border border-gray-200">Bag ID</th>
+              <th className="px-4 py-2 border border-gray-200">PID</th>
               <th className="px-4 py-2 border border-gray-200">Bag Weight</th>
               <th className="px-4 py-2 border border-gray-200">Total Package</th>
               <th className="px-4 py-2 border border-gray-200">
@@ -89,6 +90,9 @@ const getReceiving = async() => {
                 </td>
                 <td className="px-4 py-2 border-r border-l border-gray-500">
                   {data.BagID}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.PID}
                 </td>
                 <td className="px-4 py-2 border-r border-l border-gray-500">
                   {data.weight} kg

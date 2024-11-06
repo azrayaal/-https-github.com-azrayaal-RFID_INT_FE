@@ -74,6 +74,7 @@ import ScanInbound from "./pages/inbound/scan";
 import DetailInbound from "./pages/inbound/detail";
 import DetailOutbound from "./pages/outbound/detail";
 import ScanOutbound from "./pages/outbound/scan";
+import ReceivingGate from "./pages/gate";
 
 function App() {
   return (
@@ -95,6 +96,7 @@ function App() {
               <Route path="/scan/inbound" element={<ScanInbound />} />
               <Route path="/scan/outbound" element={<ScanOutbound />} />
               <Route path="/scan" element={<ScanTag />} />
+              <Route path="/:gateName" element={<ReceivingGate />} />
               {/* RFID */}
               <Route path="/read" element={<Read />} />
               <Route path="/clear" element={<Clear />} />
