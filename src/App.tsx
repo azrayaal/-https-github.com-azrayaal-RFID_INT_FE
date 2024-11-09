@@ -75,10 +75,13 @@ import DetailInbound from "./pages/inbound/detail";
 import DetailOutbound from "./pages/outbound/detail";
 import ScanOutbound from "./pages/outbound/scan";
 import ReceivingGate from "./pages/gate";
+import ScanGate from "./pages/gate/scan";
+import Settings from "./pages/setting";
 
 function App() {
   return (
     <div className="">
+       <ToastContainer /> 
       <Router>
         <Routes>
           {/* Login Route outside of Layout */}
@@ -87,16 +90,19 @@ function App() {
           {/* Routes with Layout */}
           <Route element={<Layout />}>
             {/* Protected Routes */}
+            
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<Home />} />
               <Route path="/loading" element={<Loading />} />
               <Route path="/receiving" element={<Receiving />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/receiving/:id" element={<DetailInbound />} />
               <Route path="/loading/:id" element={<DetailOutbound />} />
               <Route path="/scan/inbound" element={<ScanInbound />} />
               <Route path="/scan/outbound" element={<ScanOutbound />} />
               <Route path="/scan" element={<ScanTag />} />
-              <Route path="/:gateName" element={<ReceivingGate />} />
+              <Route path="/gate/scan/:id" element={<ScanGate />} />
+              <Route path="/gate/:id" element={<ReceivingGate />} />
               {/* RFID */}
               <Route path="/read" element={<Read />} />
               <Route path="/clear" element={<Clear />} />

@@ -1,5 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+// import  Cookies  from 'js-cookie';
+
+// const readerIp = Cookies.get('readerIp');
 
 // https://vitejs.dev/config/
 export default defineConfig({

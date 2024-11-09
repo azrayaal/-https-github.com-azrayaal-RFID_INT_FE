@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaBox, FaDropbox, FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import { AiFillHome } from "react-icons/ai";
-import { IoScanCircle } from "react-icons/io5";
+import { IoScanCircle,IoSettings } from "react-icons/io5";
 import { API_Header } from "../../libs";
 import { BiSolidArch } from "react-icons/bi";
+import { FcSettings } from "react-icons/fc";
+import { BsBroadcast } from "react-icons/bs";
+
 
 // Tentukan tipe data untuk item pada gate
 type GateItem = {
   gateName: string;
+  id: number;
 };
 
 export default function Sidebar() {
@@ -28,12 +32,15 @@ export default function Sidebar() {
   const useScan = () => {
     navigate('/scan');
   };
+  const useSetting = () => {
+    navigate('/settings');
+  };
 
   const getGateway = async () => {
     try {
       const res = await API_Header.get('/gate');
       setGate(res.data.data);
-      console.log(res.data.data);
+      console.log(res.data.data)
     } catch (error) {
       console.log(error);
     }
@@ -66,23 +73,23 @@ export default function Sidebar() {
         <ul>
           <li
             className={`flex items-center p-3 mb-2 ${
-              isActive("/") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+              isActive("/") ? "bg-orange-500" : "hover:bg-orange-500 hover:text-gray-200"
             } rounded-r-full cursor-pointer`}
             onClick={useHome}
           >
             <span className="mr-3">
-              <AiFillHome className="text-orange-500 text-2xl" />
+              <AiFillHome className="text-orenPos text-2xl" />
             </span>
             {!isCollapsed && "Home"}
           </li>
 
           {gate.map((item) => (
             <li
-              key={item.gateName}
+              key={item.id}
               className={`flex items-center p-3 mb-2 ${
-                isActive(`/${item.gateName}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+                isActive(`/${item.id}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
               } rounded-r-full cursor-pointer`}
-              onClick={() => navigate(`/${item.gateName}`)}
+              onClick={() => navigate(`/gate/${item.id}`)}
             >
               <span className="mr-3">
                 <BiSolidArch className="text-orange-500 text-2xl" />
@@ -93,14 +100,25 @@ export default function Sidebar() {
 
           <li
             className={`flex items-center p-3 mb-2 ${
-              isActive("/scan") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+              isActive("/scan") ? "bg-orange-500" : "hover:bg-orange-500 hover:text-gray-200"
             } rounded-r-full cursor-pointer`}
             onClick={useScan}
           >
             <span className="mr-3">
-              <IoScanCircle className="text-orange-500 text-2xl" />
+              <BsBroadcast className="text-orenPos text-2xl" />
             </span>
             {!isCollapsed && "Scan"}
+          </li>
+          <li
+            className={`flex items-center p-3 mb-2 ${
+              isActive("/settings") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+            } rounded-r-full cursor-pointer`}
+            onClick={useSetting}
+          >
+            <span className="mr-3">
+              <IoSettings  className="text-red-700 text-2xl" />
+            </span>
+            {!isCollapsed && "Settings"}
           </li>
         
         </ul>
