@@ -32,22 +32,19 @@ export default function ScanTag() {
   <div className="grid grid-rows-1 grid-cols-3 grid-flow-col gap-4">
     <div>
         <Link to='/write'>
-    <div  className="block max-w-sm p-6 bg-orange-500 hover:text-orange-500 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-<h5 className="mb-2 text-2xl font-bold tracking-tight text-white hover:text-orange-500 dark:text-white">Write</h5>
+    <div  className="block max-w-sm p-6 bg-orange-500 hover:text-orange-500 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-white font-bold text-xl" >Write
 </div>
         </Link>
     </div>
     <div>
     <Link to='/read'>
-    <div className="block max-w-sm p-6 text-white bg-orenPos border border-gray-200 rounded-lg hover:text-orenPos shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-<h5 className="mb-2 text-2xl font-bold tracking-tight text-text-white dark:text-white hover:text-orenPos">Read</h5>
+    <div className="block max-w-sm p-6 text-white bg-orenPos border border-gray-200 rounded-lg hover:text-orenPos shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 font-bold text-xl"> Read
 </div>
     </Link>
     </div>
     <div>
     <Link to='/clear'>
-    <div  className="block max-w-sm p-6 bg-gray-600 hover:text-gray-600 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-<h5 className="mb-2 text-2xl font-bold tracking-tight text-white hover:text-gray-600 dark:text-white">Clear</h5>
+    <div  className="block max-w-sm p-6 bg-gray-600 hover:text-gray-600 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-white font-bold text-xl"> Clear
 </div>
   </Link>
     </div>

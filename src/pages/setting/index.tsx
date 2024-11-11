@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import React, { useEffect, useState } from 'react';
 import { API } from '../../libs';
+import { toast } from 'react-toastify';
 
 export default function Settings() {
   const [username, setUserName] = useState('admin');
@@ -13,7 +14,7 @@ export default function Settings() {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     Cookies.set('readerIp', readerIp, { expires: 7 });
-    alert('Form submitted successfully!');
+    toast.success('Form submitted successfully!');
   };
 
   const handleSubmitLoginReader = async (event: any) => {
@@ -42,7 +43,7 @@ export default function Settings() {
         try {
           data = await response.json();
           Cookies.set('tokenReader', data.message, { expires: 7 });
-          alert('Login berhasil!');
+          toast.success('Login successful!');
         } catch (error) {
           console.error('Error parsing JSON:', error);
         }

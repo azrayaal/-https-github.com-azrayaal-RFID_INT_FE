@@ -56,7 +56,6 @@
 
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Loading from "./pages/outbound";
 import Layout from "./layout";
 import ScanTag from "./pages/mobile";
 import Read from "./pages/mobile/read";
@@ -66,22 +65,17 @@ import IdleTags from "./pages/mobile/idleTag";
 import InuseTags from "./pages/mobile/inuseTag";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Receiving from "./pages/inbound";
 import Home from "./pages/home";
 import Login from "./pages/auth";
 import { PrivateRoute } from "./hooks/privateRoute";
-import ScanInbound from "./pages/inbound/scan";
-import DetailInbound from "./pages/inbound/detail";
-import DetailOutbound from "./pages/outbound/detail";
-import ScanOutbound from "./pages/outbound/scan";
 import ReceivingGate from "./pages/gate";
 import ScanGate from "./pages/gate/scan";
 import Settings from "./pages/setting";
+import DetailMovement from "./pages/gate/detail";
 
 function App() {
   return (
     <div className="">
-       <ToastContainer /> 
       <Router>
         <Routes>
           {/* Login Route outside of Layout */}
@@ -93,13 +87,8 @@ function App() {
             
             <Route element={<PrivateRoute />}>
               <Route path="/" element={<Home />} />
-              <Route path="/loading" element={<Loading />} />
-              <Route path="/receiving" element={<Receiving />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/receiving/:id" element={<DetailInbound />} />
-              <Route path="/loading/:id" element={<DetailOutbound />} />
-              <Route path="/scan/inbound" element={<ScanInbound />} />
-              <Route path="/scan/outbound" element={<ScanOutbound />} />
+              <Route path="/gate/movement/:id" element={<DetailMovement/>} />
               <Route path="/scan" element={<ScanTag />} />
               <Route path="/gate/scan/:id" element={<ScanGate />} />
               <Route path="/gate/:id" element={<ReceivingGate />} />
@@ -111,22 +100,21 @@ function App() {
               <Route path="/inusetags" element={<InuseTags />} />
             </Route>
           </Route>
-
           {/* Fallback route for 404 */}
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
 
         <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
+         position="top-center"
+         autoClose={5000}
+         hideProgressBar={false}
+         newestOnTop={false}
+         closeOnClick
+         rtl={false}
+         pauseOnFocusLoss
+         draggable
+         pauseOnHover
+         theme="colored"
         />
       </Router>
     </div>

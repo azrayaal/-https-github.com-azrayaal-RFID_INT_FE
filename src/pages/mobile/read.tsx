@@ -2,15 +2,16 @@ import { useEffect, useState } from "react";
 import nodata from "../../../public/nodata.png";
 import { useNavigate } from "react-router-dom";
 import { API_Header } from "../../libs";
-
+import  Cookies  from 'js-cookie';
 export default function ScanInbound() {
   const [receiving, setReceiving] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
   const navigate = useNavigate();
 
-  const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJaRUJSQSIsImV4cCI6MTczMDQzNjM1M30.NCECA6LtaaCMAFRueke91hiJ_y0JdFUE4ZyRIhEHNFiFzAlpES_sYMlpUVLNmm5JnHYLf7UV9-4KmQgp4fo9BA';
-  const readerIp = '169.254.10.1';
+
+  const tokenReader = Cookies.get("tokenReader");
+  const readerIp = Cookies.get("readerIp");
 
   // Start scanning
   const handleScan = async () => {
@@ -19,7 +20,7 @@ export default function ScanInbound() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${tokenReader}`
         }
       });
 
@@ -43,7 +44,7 @@ export default function ScanInbound() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${tokenReader}`
         }
       });
 
@@ -87,7 +88,7 @@ export default function ScanInbound() {
   };
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://${readerIp}/ws?token=${token}`);
+    const ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
 
     ws.onopen = () => console.log('Opened connection');
     ws.onmessage = (event) => {
@@ -171,34 +172,64 @@ export default function ScanInbound() {
       <div className="bg-white rounded-b-lg shadowCard overflow-auto ">
         <table className="w-full text-left table-auto border-collapse">
           <thead className="text-white bg-gray-900">
-            <tr>
+          <tr className="border-t-2 border-white bg-gray-900">
               <th className="px-4 py-2 border border-gray-200">No</th>
               <th className="px-4 py-2 border border-gray-200">EPC</th>
-              <th className="px-4 py-2 border border-gray-200">PID</th>
-              <th className="px-4 py-2 border border-gray-200">Item Name</th>
-              <th className="px-4 py-2 border border-gray-200">Weight</th>
-              <th className="px-4 py-2 border border-gray-200">Seal Number</th>
-              <th className="px-4 py-2 border border-gray-200">Quantity</th>
-              <th className="px-4 py-2 border border-gray-200">Item Description</th>
-              <th className="px-4 py-2 border border-gray-200">Location</th>
-              <th className="px-4 py-2 border border-gray-200">Destination</th>
-              <th className="px-4 py-2 border border-gray-200">Updated By</th>
+              <th className="px-4 py-2 border border-gray-200">BAG ID</th>
+              <th className="px-4 py-2 border border-gray-200">Total Berat</th>
+              <th className="px-4 py-2 border border-gray-200">Nomor Seal</th>
+              <th className="px-4 py-2 border border-gray-200">From</th>
+              <th className="px-4 py-2 border border-gray-200">To</th>
+              <th className="px-4 py-2 border border-gray-200">Service</th>
+              <th className="px-4 py-2 border border-gray-200">
+              Receiver
+              </th>
+              <th className="px-4 py-2 border border-gray-200">
+                Location
+              </th>
+              <th className="px-4 py-2 border border-gray-200">Tanggal Discan</th>
+              <th className="px-4 py-2 border border-gray-200">Tanggal Dibuat</th>
             </tr>
           </thead>
           <tbody>
             {filteredReceiving.map((data, index) => (
               <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
-                <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.EPC}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.item_name}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.seal_number}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.quantity}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.item_description}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.location?.name} - {data.location?.address}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.destination?.name} - {data.destination?.address}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.updated_by?.name} ({data.updated_by?.contact})</td>
+                 <td className="px-4 py-2 border-r  border-gray-500">
+                  {index + 1}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.EPC}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.PID}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.weight}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.sealNumber}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.originLocation}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.destination}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.service}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.created_rfid_by}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.currentLocation}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.updated_at}
+                </td>
+                <td className="px-4 py-2 border-r border-l border-gray-500">
+                  {data.created_at}
+                </td>
               </tr>
             ))}
             {filteredReceiving.length === 0 && (

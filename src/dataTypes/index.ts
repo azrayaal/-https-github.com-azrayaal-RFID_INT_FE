@@ -13,16 +13,26 @@
 //   }
 
   export interface RfidTag {
-    id: number;
-    EPC: string;
+    BagID: string;
     PID: string;
-    destination:{
-      address: string;
-      name: string;
-    };
+    EPC: string;
+  weight: string;
+  total: number;
+  sealNumber: string;
+  receiver_name: string;
+  receiver_contact: string;
+  originLocation: string;
+  destination: string;
+  status: string;
+  service: string;
+  updated_at: string;
+  created_rfid_by: string;
+  currentLocation: string;
+  scanned_at: string;
+  created_at: string;
+  id: number;
     item_name: string;
     item_description: string;
-    weight: string;
     location: {
       address: string;
       name: string;
@@ -54,13 +64,23 @@
   export interface receiving {
     BagID: string;
     PID: string;
+    EPC: string;
   weight: string;
   total: number;
+  tag_status: string;
+  sealNumber: string;
+  packagesCount: number;
   receiver_name: string;
   receiver_contact: string;
+  originLocation: string;
   destination: string;
   status: string;
+  service: string;
+  updated_at: string;
+  created_rfid_by: string;
+  currentLocation: string;
   scanned_at: string;
+  created_at: string;
   id: number;
   }
   export interface LoadingData {

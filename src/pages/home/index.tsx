@@ -9,6 +9,7 @@ export default function Home() {
   const [totalOutbound, setTotalOutbound] = useState(0);
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
+  const [gate, setGate] = useState([]);
 
   const getTotalIdleTags = async () => {
     try {
@@ -46,11 +47,23 @@ export default function Home() {
     }
   };
 
+  const getGate = async () => {
+    try {
+      const res = await API_Header.get('/gate');
+      setGate(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  console.log(gate)
+
   useEffect(() => {
     getTotalInbound();
     getTotalOutbound();
     getTotalIdleTags();
     getTotalInUseTags();
+    getGate();
 
     // Update the date and time every second
     const intervalId = setInterval(() => {
@@ -91,40 +104,40 @@ export default function Home() {
         </div>
 
         {/* Tag Count Card */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link to={`/inusetags`} className="hover:shadow-2xl">
           <div className="bg-orenPos text-white rounded-lg shadowCard p-6">
             <h2 className="text-xl font-semibold">In Use Tags</h2>
             <div className="text-4xl font-bold my-2">{totalInUseTags}</div>
           </div>
-
+          </Link>
+          
+          <Link to={`/idletags`} className="hover:shadow-2xl">
           <div className="bg-orenPos text-white rounded-lg shadowCard p-6">
             <h2 className="text-xl font-semibold">Idle Tags</h2>
             <div className="text-4xl font-bold my-2">{totalIdleTags}</div>
           </div>
+          </Link>
         </div>
       </div>
       
       {/* Inbound/Outbound Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Link to='/receiving' className="hover:shadow-2xl">
-          <div className="bg-orenPos text-white rounded-lg shadowCard p-6">
-            <h2 className="text-xl font-semibold">Inbound</h2>
-            <div className="text-4xl font-bold my-2">{totalInbound}</div>
-            <div className="text-gray-200">Inbound Details</div>
-          </div>
-        </Link>
-        <Link to='/loading' className="hover:shadow-2xl">
-          <div className="bg-orenPos text-white rounded-lg shadowCard p-6">
-            <h2 className="text-xl font-semibold">Outbound</h2>
-            <div className="text-4xl font-bold my-2">{totalOutbound}</div>
-            <div className="text-gray-200">Outbound Details</div>
-          </div>
-        </Link>
+      {gate.map((data: any) => (
+          <Link to={`/gate/${data.id}`} className="hover:shadow-2xl">
+          <div className="bg-orenPos text-white rounded-lg shadowCard p-6" key={data.id}>
+          <h2 className="text-xl font-semibold">{data.gateName}</h2>
+          <div className="text-4xl font-bold my-2">- - -</div>
+          <div className="text-gray-200">---</div>
+        </div>
+          </Link>
+        ))}
         <Link to='/scan' className="hover:shadow-2xl">
           <div className="bg-orenPos text-white rounded-lg shadowCard p-6">
             <h2 className="text-xl font-semibold">Scan</h2>
             <div className="text-4xl font-bold my-2">- - -</div>
-            <div className="text-gray-200">Read / Write Tag</div>
+            <div className="text-gray-200">Read / Clear Tag</div>
           </div>
         </Link>
       </div>

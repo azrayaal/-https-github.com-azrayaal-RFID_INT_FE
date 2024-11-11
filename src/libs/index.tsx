@@ -24,6 +24,15 @@ export const API_Header = axios.create({
   },
 });
 
+export const API_NIPOS = axios.create({
+  baseURL: import.meta.env.VITE_API_NIPOS + `public/v1/connote/`,
+  headers: {
+    "Content-Type": "application/json",
+    "x-api-key": import.meta.env.VITE_X_API_KEY_NIPOS,
+    "org-name": "pos"
+  }
+})
+
 // Export base URL for images or other uses
 export const imgUrl = import.meta.env.VITE_IMG_BASE_URL;
 export const baseUrl = import.meta.env.VITE_IMG_BASE_URL;

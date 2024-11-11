@@ -40,7 +40,6 @@ export default function Sidebar() {
     try {
       const res = await API_Header.get('/gate');
       setGate(res.data.data);
-      console.log(res.data.data)
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +86,7 @@ export default function Sidebar() {
             <li
               key={item.id}
               className={`flex items-center p-3 mb-2 ${
-                isActive(`/${item.id}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+                isActive(`/gate/${item.id}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
               } rounded-r-full cursor-pointer`}
               onClick={() => navigate(`/gate/${item.id}`)}
             >

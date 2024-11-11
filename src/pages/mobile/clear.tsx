@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import nodata from "../../../public/nodata.png";
 import { useNavigate } from "react-router-dom";
 import { API_Header } from "../../libs";
+import { toast } from "react-toastify";
+import  Cookies  from 'js-cookie';
 
 export default function ScanInbound() {
   const [receiving, setReceiving] = useState<any[]>([]);
@@ -9,8 +11,8 @@ export default function ScanInbound() {
   const [scanButton, setScanButton] = useState(true);
   const navigate = useNavigate();
 
-  const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJaRUJSQSIsImV4cCI6MTczMDQzNjM1M30.NCECA6LtaaCMAFRueke91hiJ_y0JdFUE4ZyRIhEHNFiFzAlpES_sYMlpUVLNmm5JnHYLf7UV9-4KmQgp4fo9BA';
-  const readerIp = '169.254.10.1';
+  const tokenReader = Cookies.get("tokenReader");
+  const readerIp = Cookies.get("readerIp");
 
   // Start scanning
   const handleScan = async () => {
@@ -19,7 +21,7 @@ export default function ScanInbound() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${tokenReader}`
         }
       });
 
@@ -43,7 +45,7 @@ export default function ScanInbound() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${tokenReader}`
         }
       });
 
@@ -91,9 +93,9 @@ export default function ScanInbound() {
       );
   
       if (failedItems.length === 0) {
-        alert("All scanned data sent to inbound successfully!");
+        toast.success("All scanned data sent to inbound successfully!");
       } else {
-        alert(`Some items failed to send: ${failedItems.join(", ")}.`);
+        toast.error(`Some items failed to send: ${failedItems.join(", ")}.`);
       }
   
       handleStopScan();
@@ -117,7 +119,7 @@ export default function ScanInbound() {
   };
 
   useEffect(() => {
-    const ws = new WebSocket(`wss://${readerIp}/ws?token=${token}`);
+    const ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
 
     ws.onopen = () => console.log('Opened connection');
     ws.onmessage = (event) => {
