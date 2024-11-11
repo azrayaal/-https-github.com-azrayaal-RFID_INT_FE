@@ -93,7 +93,8 @@ export default function ScanGate() {
   };
   const updateResiNipos = async (connote_resi: string) => {
     try {
-       await API_NIPOS.put(`/${connote_resi}`, {
+      console.log('connote_resi dalam update', connoteResi)
+       const response = await API_NIPOS.put(`/${connote_resi}`, {
         "connote_id": "{{resi_id}}",
         "connote_state": "R7",
         "currentLocation": {
@@ -128,6 +129,7 @@ export default function ScanGate() {
           }
         ]
       });
+      console.log(response)
     } catch (error) {
       console.log(error);
     }
@@ -165,11 +167,11 @@ export default function ScanGate() {
   
       if (failedItems.length === 0) {
         toast.success("All scanned data successfully!");
-        if (window.history.length > 1) {
-          navigate(-1); // Navigate to the previous page if there is history
-        } else {
-          navigate("/"); // Fallback to the home page or any specific route
-        }
+        // if (window.history.length > 1) {
+        //   navigate(-1); // Navigate to the previous page if there is history
+        // } else {
+        //   navigate("/"); // Fallback to the home page or any specific route
+        // }
       } else {
         toast.error(`Some items failed to send: ${failedItems.join(", ")}.`);
         navigate(-1);
@@ -190,8 +192,10 @@ export default function ScanGate() {
       }
       if (res.data && res.data.data) {
         setReceiving((prev) => [...prev, res.data.data]);
-        console.log(res.data.data.PID);
-        // setConnoteResi(res.data.data.PID); // Set connote_resi in state
+        // console.log(res.data.data);
+        const pid = res.data.data.PID;
+        console.log("Direct PID:", pid);
+       setConnoteResi(pid); // Update state// Set connote_resi in state
       }
     } catch (error) {
       console.log("Error fetching tag details:", error);
@@ -259,7 +263,7 @@ export default function ScanGate() {
   return (
     <div className="min-h-screen p-8 bg-gray-300">
       
-      <h1 className="text-3xl font-bold text-center pb-3">SCAN INBOUND</h1>
+      <h1 className="text-3xl font-bold text-center pb-3">SCAN TAGS</h1>
       <div className="bg-orange-500 text-white rounded-t-lg p-4 flex justify-between items-center">
         <h3 className="text-lg font-semibold">
           Total scanned items: {filteredReceiving.length}
