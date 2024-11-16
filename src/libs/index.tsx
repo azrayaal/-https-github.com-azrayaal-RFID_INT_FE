@@ -5,7 +5,9 @@ import {jwtDecode} from "jwt-decode";
 // Function to get the token from cookies
 const token: string = cookie.get("token") || "";
 const tokenDecode: string = atob(token);
+// console.log('tokenDecode', tokenDecode);
 
+export const userDataJWT:any = tokenDecode ? jwtDecode(tokenDecode) : null;
 // Decode the token if it exists
 // const tokenDecoded = tokenDecode ? jwtDecode(tokenDecode) : null;
 // Axios instance for API without headers

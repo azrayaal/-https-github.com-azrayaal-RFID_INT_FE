@@ -54,7 +54,7 @@ export default function Sidebar() {
   return (
     <div
       className={`h-full flex flex-col pr-4 pt-4 text-white bg-gray-500 transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-20" : "w-64"
+        isCollapsed ? "w-20" : "w-34"
       }`}
     >
       <div
@@ -86,7 +86,7 @@ export default function Sidebar() {
             <li
               key={item.id}
               className={`flex items-center p-3 mb-2 ${
-                isActive(`/gate/${item.id}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+                isActive(`/gate/${item.id}`) || isActive(`/gate/scan/${item.id}`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
               } rounded-r-full cursor-pointer`}
               onClick={() => navigate(`/gate/${item.id}`)}
             >

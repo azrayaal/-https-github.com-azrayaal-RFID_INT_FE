@@ -71,6 +71,7 @@ import { PrivateRoute } from "./hooks/privateRoute";
 import ReceivingGate from "./pages/gate";
 import ScanGate from "./pages/gate/scan";
 import Settings from "./pages/setting";
+// import Manifest from "./pages/manifest";
 import DetailMovement from "./pages/gate/detail";
 
 function App() {
@@ -92,6 +93,7 @@ function App() {
               <Route path="/scan" element={<ScanTag />} />
               <Route path="/gate/scan/:id" element={<ScanGate />} />
               <Route path="/gate/:id" element={<ReceivingGate />} />
+              {/* <Route path="/manifest" element={<Manifest />} /> */}
               {/* RFID */}
               <Route path="/read" element={<Read />} />
               <Route path="/clear" element={<Clear />} />
