@@ -6,6 +6,9 @@ import { IoScanCircle,IoSettings } from "react-icons/io5";
 import { API_Header } from "../../libs";
 import { BiSolidArch } from "react-icons/bi";
 import { FcSettings } from "react-icons/fc";
+import { BsCaretDownSquareFill } from "react-icons/bs";
+import { BsCaretUpSquareFill } from "react-icons/bs";
+
 import { BsBroadcast } from "react-icons/bs";
 
 
@@ -110,11 +113,11 @@ export default function Sidebar() {
             onClick={useReceiving}
           >
             <span className="mr-3">
-            <BiSolidArch className="text-orange-500 text-2xl" />
+            <BsCaretDownSquareFill className="text-orange-500 text-2xl" />
             </span>
             {!isCollapsed && "Receiving"}
           </li>
-
+          
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/loading") || isActive("/loading/scan") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
@@ -122,7 +125,7 @@ export default function Sidebar() {
             onClick={useLoading}
           >
             <span className="mr-3">
-            <BiSolidArch className="text-orange-500 text-2xl" />
+            <BsCaretUpSquareFill className="text-orange-500 text-2xl" />
             </span>
             {!isCollapsed && "Loading"}
           </li>

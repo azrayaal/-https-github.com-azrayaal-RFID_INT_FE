@@ -14,38 +14,38 @@ export default function ReceivingScan() {
   const navigate = useNavigate();
   const [connoteResi, setConnoteResi] = useState(""); // State to hold connote_resi
   const { id } = useParams();
+  const [isLoading, setIsLoading] = useState(false)
 
   const tokenReader = Cookies.get("tokenReader");
   const readerIp = Cookies.get("readerIp");
 
-
-
   // Start scanning
   const handleScan = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`/api/cloud/start`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokenReader}`
-        }
+          'Authorization': `Bearer ${tokenReader}`,
+        },
       });
-
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Server error:', errorData);
-        // toast.error('Failed to start scanning. Please press Stop button and try again')
         handleStopScan();
       } else {
-        // toast.success('Scan command sent successfully.')
         setScanButton(false);
-        
+        toast.success('Scan started');
       }
     } catch (error) {
-      console.error('Error sending scan command:', error);
+      console.error('Error starting scan:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+  
 
   // Stop scanning and clear table
   const handleStopScan = async () => {
@@ -62,78 +62,22 @@ export default function ReceivingScan() {
         const errorData = await response.json();
         console.error('Server error:', errorData);
       } else {
-        // console.log('Stop scan command sent successfully');
-        // toast.error('Scan Stopped.')
-        // setScanButton(true);
+        setScanButton(true);
         setReceiving([]); // Clear the data in the table
-        handleScan()
+        // handleScan()
       }
     } catch (error) {
       console.error('Error sending Stop scan command:', error);
     }
   };
-  
-  // const handleStopScanBack = async () => {
-  //   try {
-  //     const response = await fetch(`/api/cloud/stop`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${tokenReader}`
-  //       }
-  //     });
 
-  //     if (!response.ok) {
-  //       const errorData = await response.json();
-  //       console.error('Server error:', errorData);
-  //     } else {
-  //       console.log('Stop scan command sent successfully');
-  //       // toast.error('Scan Stopped.')
-  //       setScanButton(true);
-  //       setReceiving([]); // Clear the data in the table
-  //     }
-  //   } catch (error) {
-  //     console.error('Error sending Stop scan command:', error);
-  //   }
-  // };
-
-  // const updateResiNipos = async (connote_resi: string) => {
-  //   try {
-  //      const date = new Date();
-  //      const formattedDate = date.toISOString().slice(0, 19).replace("T", " ");
-  //      const response = await API_NIPOS.put(`/${connote_resi}`, {
-  //       "connote_id": `${connote_resi}`,
-  //       "connote_state": "R7",
-  //       "currentLocation": {
-  //         "name": `${userDataJWT?.locationName}`, // id location dari jwt token login
-  //         "code": `${userDataJWT?.locationId}`,   //ambil dari code location
-  //         "type": "Location",
-  //         "is": "ORIGIN",
-  //       },
-  //       "content-history": [
-  //         {
-  //           "content": `Barang anda telah melewati proses Receiving oleh ${userDataJWT?.name} di ${userDataJWT?.locationName}`,
-  //           "action": "R7",
-  //           "created_at": formattedDate,
-  //           "connote_code": `${connote_resi}`,
-  //           "connote_state": "R7",
-  //           "username": ` ${userDataJWT?.name}`,
-  //           "location_name": `${userDataJWT?.locationName}`,
-  //           "coordinate": `${userDataJWT?.cordinate}`
-  //         }
-  //       ]
-  //     });
-  //     console.log(response)
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   
   // Send a single item to the inbound endpoint
-  const sendToInbound = async (rfid_tag_id: string) => {
+  const sendToInbound = async (EPC: string) => {
+    console.log(EPC)
     try {
       // Log the payload being sent to inspect the structure
-      const response = await API_Header.post(`/gate/${id}`, { rfid_tag_id, gate: id });
+      const response = await API_Header.post(`/receive`, { EPC });
       if (response.data.success) {
         console.log("Data sent to inbound successfully:", response.data);
       }
@@ -150,7 +94,7 @@ export default function ReceivingScan() {
       await Promise.all(
         receiving.map(async (item) => {
           try {
-            await sendToInbound(item.id); // Send each item’s `id` as `rfid_tag_id`
+            await sendToInbound(item.EPC); // Send each item’s `id` as `rfid_tag_id`
           } catch (error) {
             console.error(`Error sending item ${item.id} to inbound:`, error);
             failedItems.push(item.id); // Collect failed items for later reference
@@ -178,64 +122,82 @@ export default function ReceivingScan() {
     }
   
     try {
-      const res = await API_Header.post("/rfid-tags/read", { EPC: epc });
-      const status = res.data.status;
-      if (status === "error") {
-        toast.error(`Error fetching tag details: ${status}`);
-        console.log("Error fetching tag details", res.data);
-      }
+      const res = await API_Header.post("/rfid-tags/readGate", { EPC: epc });
+      console.log(res)
       if (res.data && res.data.data) {
-        setReceiving((prev) => [...prev, res.data.data]);
+        setReceiving((prev) => {
+          // Avoid duplicates
+          const exists = prev.some((item) => item.id === res.data.data.id);
+          return exists ? prev : [...prev, res.data.data];
+        });
       }
     } catch (error) {
       console.error("Error fetching tag details:", error);
     }
   };
   
+
   useEffect(() => {
-    handleScan();
-    const ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
+    let ws : any;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
   
-    ws.onopen = () => {
-      console.log('Opened WebSocket connection');
+    const initializeWebSocket = () => {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        console.log('WebSocket already connected or connecting');
+        return;
+      }
+  
+      ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
+  
+      ws.onopen = () => {
+        console.log('WebSocket connection opened');
+        reconnectAttempts = 0; // Reset attempts
+      };
+  
+      ws.onmessage = (event:any) => {
+        const data = event.data;
+  
+        if (data instanceof Blob) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === 'string') processMessage(reader.result);
+          };
+          reader.readAsText(data);
+        } else {
+          processMessage(data);
+        }
+      };
+  
+      ws.onerror = (error:any) => {
+        console.error('WebSocket error:', error);
+        handleStopScan();
+      };
+  
+      ws.onclose = (event:any) => {
+        console.log(`WebSocket closed: Code ${event.code}, Reason: ${event.reason}`);
+        if (event.code === 3003 && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          reconnectAttempts++;
+          console.log(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+          setTimeout(() => {
+            initializeWebSocket();
+          }, 5000); // Reconnect delay
+        } else {
+          console.error('Max reconnect attempts reached or closed cleanly');
+          handleStopScan();
+        }
+      };
     };
   
-    ws.onmessage = (event) => {
-      const data = event.data;
+    initializeWebSocket();
   
-      if (data instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === 'string') processMessage(reader.result);
-        };
-  
-        reader.readAsText(data);
-      } else {
-        processMessage(data);
+    return () => {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        ws.close();
       }
     };
+  }, [readerIp, tokenReader]);
   
-    ws.onerror = (event) => {
-      console.error('WebSocket error:', event);
-      handleStopScan()
-    };
-  
-    ws.onclose = (event) => {
-      console.log(`WebSocket connection closed: Code ${event.code}, Reason: ${event.reason}`);
-      
-      // Panggil handleStopScan terlebih dahulu
-      handleStopScan();
-    
-      // Tambahkan timeout kecil untuk memastikan handleStopScan selesai sebelum koneksi ditutup
-      setTimeout(() => {
-        ws.close();
-      }, 100);
-    };
-    
-  
-    // Ensure connection closes properly when component unmounts
-    return () => ws.close();
-  }, []); // Empty dependency array to run this effect only once
   
   const processMessage = (message: string) => {
     try {
@@ -290,13 +252,13 @@ export default function ReceivingScan() {
           />
         </div>
         {scanButton ? (
-          // <button className="py-2 px-5 bg-green-500 rounded cursor-pointer" onClick={handleScan}>
-          //   Start
-          // </button>
-        <div></div>
+          <button className="py-2 px-5 bg-green-500 rounded cursor-pointer" onClick={handleScan}>
+            Start
+          </button>
+        // <div></div>
         ) : (
           <button className="py-2 px-5 bg-red-500 rounded cursor-pointer" onClick={handleStopScan}>
-            Refresh
+            Stop
           </button>
         )}
         <div className="p-4 flex justify-end">
@@ -312,7 +274,7 @@ export default function ReceivingScan() {
         <table className="w-full text-left table-auto border-collapse">
           <thead className="text-white bg-orange-500">
             <tr>
-            <th className="px-4 py-2 border border-gray-200">No</th>
+              <th className="px-4 py-2 border border-gray-200">No</th>
               <th className="px-4 py-2 border border-gray-200">Bag Id</th>
               <th className="px-4 py-2 border border-gray-200">Type</th>
               <th className="px-4 py-2 border border-gray-200">Bag Weight</th>
@@ -325,13 +287,12 @@ export default function ReceivingScan() {
             {filteredReceiving.map((data, index) => (
               <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
                 <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.type}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.packagesCount}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.destination}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.movement_created_at}</td>
-                
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.packagesCount}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.destination}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.created_at}</td>
               </tr>
             ))}
             {filteredReceiving.length === 0 && (

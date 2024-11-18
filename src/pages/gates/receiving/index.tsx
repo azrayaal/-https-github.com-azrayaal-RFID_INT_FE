@@ -28,9 +28,8 @@ export default function ReceivingGate() {
       setDataMovement([]);
       setTotalBag(0);
 
-      const res = await API_Header.get(`/gate/${id}?limit=${limit}&page=${page}`);
-      // console.log(res)
-      setGateName(res.data.gateDetail.gateName);
+      const res = await API_Header.get(`/receive?limit=${limit}&page=${page}`);
+      console.log(res)
       setDataMovement(res.data.data);
       setTotalBag(res.data.total);
       setTotalItems(res.data.total); // Set total items count
@@ -59,7 +58,7 @@ export default function ReceivingGate() {
       <h1 className="text-3xl font-bold text-center">{gateName}</h1>
 
       {/* Controls Section */}
-      <div className="flex justify-between mb-4">
+      <div className="flex mb-4">
         <div>
           <label className="mr-2">Show:</label>
           <select
@@ -72,6 +71,9 @@ export default function ReceivingGate() {
             <option value={100}>100</option>
           </select>
         </div>
+        {/* <div className="bg-red-500 text-center justify-center items-center rounded cursor-pointer">
+          Receiving
+        </div> */}
       </div>
 
       {/* Table Section */}
@@ -114,12 +116,13 @@ export default function ReceivingGate() {
                 className={`text-center cursor-pointer ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}
                 onClick={() => navigate(`/gate/movement/${data.PID}`)}
               >
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.type}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.packagesCount}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.destination}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.movement_created_at}</td>
+                    <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
+              <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.packagesCount}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.destination}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.movement_created_at}</td>
               </tr>
               
             ))}

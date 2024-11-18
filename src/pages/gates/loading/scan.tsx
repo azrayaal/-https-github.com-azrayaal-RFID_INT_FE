@@ -329,12 +329,12 @@ export default function ScanLoading() {
           <tbody>
             {filteredReceiving.map((data, index) => (
               <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
-            <td className="px-4 py-2 border-r border-l border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.type}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.packagesCount}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.destination}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.movement_created_at}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.packagesCount}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.destination}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.created_at}</td>
               </tr>
             ))}
             {filteredReceiving.length === 0 && (

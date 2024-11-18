@@ -116,12 +116,12 @@ export default function LoadingGate() {
               >
                 <td className="px-4 py-2 border-r border-gray-500">{index + 1}</td>
                 {/* <td className="px-4 py-2 border-r border-l border-gray-500">{data.EPC}</td> */}
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.type}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.packagesCount}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.destination}</td>
-                <td className="px-4 py-2 border-r border-l border-gray-500">{data.movement_created_at}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.packagesCount}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.destination}</td>
+                <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.created_at}</td>
               </tr>
               
             ))}
