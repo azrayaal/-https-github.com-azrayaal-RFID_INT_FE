@@ -174,7 +174,7 @@ import { API_Header } from "../../libs";
 import { receiving } from "../../dataTypes";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
-export default function ReceivingGate() {
+export default function RseceivingGate() {
   const { id } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [gateName, setGateName] = useState("");
@@ -197,7 +197,7 @@ export default function ReceivingGate() {
       setTotalBag(0);
 
       const res = await API_Header.get(`/gate/${id}?limit=${limit}&page=${page}`);
-      console.log(res)
+      // console.log(res)
       setGateName(res.data.gateDetail.gateName);
       setDataMovement(res.data.data);
       setTotalBag(res.data.total);

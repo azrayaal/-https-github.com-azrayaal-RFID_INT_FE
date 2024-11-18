@@ -68,11 +68,17 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./pages/home";
 import Login from "./pages/auth";
 import { PrivateRoute } from "./hooks/privateRoute";
-import ReceivingGate from "./pages/gate";
+
 import ScanGate from "./pages/gate/scan";
 import Settings from "./pages/setting";
 // import Manifest from "./pages/manifest";
 import DetailMovement from "./pages/gate/detail";
+import ScanLoading from "./pages/gates/loading/scan";
+import DetailLoading from "./pages/gates/loading/detail";
+import LoadingGate from "./pages/gates/loading";
+import ReceivingGate from "./pages/gates/receiving";
+import ReceivingScan from "./pages/gates/receiving/scan";
+import DetailReceiving from "./pages/gates/receiving/detail";
 
 function App() {
   return (
@@ -93,6 +99,14 @@ function App() {
               <Route path="/scan" element={<ScanTag />} />
               <Route path="/gate/scan/:id" element={<ScanGate />} />
               <Route path="/gate/:id" element={<ReceivingGate />} />
+
+              <Route path="/receiving" element={<ReceivingGate />} />
+              <Route path="/receiving/:id" element={<DetailReceiving />} />
+              <Route path="/receiving/scan" element={<ReceivingScan />} />
+
+              <Route path="/loading" element={<LoadingGate />} />
+              <Route path="/loading/:id" element={<DetailLoading />} />
+              <Route path="/loading/scan" element={<ScanLoading />} />
               {/* <Route path="/manifest" element={<Manifest />} /> */}
               {/* RFID */}
               <Route path="/read" element={<Read />} />

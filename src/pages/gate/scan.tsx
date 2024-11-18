@@ -374,10 +374,10 @@ export default function ScanGate() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Server error:', errorData);
-        toast.error('Failed to start scanning. Please press Stop button and try again')
+        // toast.error('Failed to start scanning. Please press Stop button and try again')
         handleStopScan();
       } else {
-        toast.success('Scan command sent successfully.')
+        // toast.success('Scan command sent successfully.')
         setScanButton(false);
         
       }
@@ -401,39 +401,40 @@ export default function ScanGate() {
         const errorData = await response.json();
         console.error('Server error:', errorData);
       } else {
-        console.log('Stop scan command sent successfully');
-        toast.error('Scan Stopped.')
-        setScanButton(true);
+        // console.log('Stop scan command sent successfully');
+        // toast.error('Scan Stopped.')
+        // setScanButton(true);
         setReceiving([]); // Clear the data in the table
+        handleScan()
       }
     } catch (error) {
       console.error('Error sending Stop scan command:', error);
     }
   };
   
-  const handleStopScanBack = async () => {
-    try {
-      const response = await fetch(`/api/cloud/stop`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${tokenReader}`
-        }
-      });
+  // const handleStopScanBack = async () => {
+  //   try {
+  //     const response = await fetch(`/api/cloud/stop`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${tokenReader}`
+  //       }
+  //     });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-      } else {
-        console.log('Stop scan command sent successfully');
-        // toast.error('Scan Stopped.')
-        setScanButton(true);
-        setReceiving([]); // Clear the data in the table
-      }
-    } catch (error) {
-      console.error('Error sending Stop scan command:', error);
-    }
-  };
+  //     if (!response.ok) {
+  //       const errorData = await response.json();
+  //       console.error('Server error:', errorData);
+  //     } else {
+  //       console.log('Stop scan command sent successfully');
+  //       // toast.error('Scan Stopped.')
+  //       setScanButton(true);
+  //       setReceiving([]); // Clear the data in the table
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sending Stop scan command:', error);
+  //   }
+  // };
 
   // const updateResiNipos = async (connote_resi: string) => {
   //   try {
@@ -514,76 +515,99 @@ export default function ScanGate() {
     }
   };
   
-  const getTag = async (epc: string) => {
+  const getTag = async (epc?: string): Promise<void> => {
+    if (!epc) {
+      console.error("No EPC provided");
+      return;
+    }
+  
     try {
-      const res = await API_Header.post('/rfid-tags/read', { EPC: epc });
+      const res = await API_Header.post("/rfid-tags/read", { EPC: epc });
       const status = res.data.status;
-      if (status === 'error') {
-        toast.error(`Error fetching tag details2: ${status}`);
-        console.log('Error fetching tag details2',res.data)
+      if (status === "error") {
+        toast.error(`Error fetching tag details: ${status}`);
+        console.log("Error fetching tag details", res.data);
       }
       if (res.data && res.data.data) {
         setReceiving((prev) => [...prev, res.data.data]);
-        // console.log(res.data.data); 
-        // const pid = res.data.data.PID;
-        // console.log("Direct PID:", pid);
-      //  setConnoteResi(pid); // Update state// Set connote_resi in state
       }
     } catch (error) {
-      console.log("Error fetching tag details1:", error);
+      console.error("Error fetching tag details:", error);
     }
   };
   
-
   useEffect(() => {
+    handleScan();
     const ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
-
-    ws.onopen = () => console.log('Opened connection');
+  
+    ws.onopen = () => {
+      console.log('Opened WebSocket connection');
+    };
+  
     ws.onmessage = (event) => {
       const data = event.data;
-     
+  
       if (data instanceof Blob) {
         const reader = new FileReader();
-      
         reader.onload = () => {
-          if (typeof reader.result === "string") processMessage(reader.result);
+          if (typeof reader.result === 'string') processMessage(reader.result);
         };
+  
         reader.readAsText(data);
-        
       } else {
         processMessage(data);
       }
     };
+  
     ws.onerror = (event) => {
       console.error('WebSocket error:', event);
-      handleStopScanBack(); // Call handleStopScan on any WebSocket error
+      handleStopScan()
+    };
+  
+    ws.onclose = (event) => {
+      console.log(`WebSocket connection closed: Code ${event.code}, Reason: ${event.reason}`);
+      
+      // Panggil handleStopScan terlebih dahulu
+      handleStopScan();
+    
+      // Tambahkan timeout kecil untuk memastikan handleStopScan selesai sebelum koneksi ditutup
+      setTimeout(() => {
+        ws.close();
+      }, 100);
     };
     
-    ws.onclose = (event) => {console.log(`Connection closed: Code ${event.code}, Reason: ${event.reason}`), handleStopScanBack();}
+  
+    // Ensure connection closes properly when component unmounts
     return () => ws.close();
-  }, []);
-
+  }, []); // Empty dependency array to run this effect only once
+  
   const processMessage = (message: string) => {
     try {
       const parsedData = JSON.parse(message);
-      if (parsedData.type === "SIMPLE" && parsedData.data?.format === "epc") {
+      if (parsedData.type === 'SIMPLE' && parsedData.data?.format === 'epc') {
         getTag(parsedData.data.idHex);
       }
-    } catch {
+    } catch (err) {
       const jsonStrings = message.match(/\{(?:[^{}]|(?:\{[^{}]*\}))*\}/g);
       jsonStrings?.forEach((jsonString) => {
         try {
           const individualData = JSON.parse(jsonString);
-          if (individualData.type === "SIMPLE" && individualData.data?.format === "epc") {
+          if (individualData.type === 'SIMPLE' && individualData.data?.format === 'epc') {
             getTag(individualData.data.idHex);
           }
         } catch (err: any) {
-          console.log("Error parsing individual JSON object:", err.message);
+          console.log('Error parsing individual JSON object:', err.message);
         }
       });
     }
   };
-
+  
+  // Call `getTag` immediately for testing
+  useEffect(() => {
+    // Jika tidak ada `epc`, pastikan memberikan nilai default atau argumen contoh
+    getTag(); // Ganti "default-epc" dengan nilai EPC tertentu jika diperlukan
+  }, []);
+  
   const filteredReceiving = receiving.filter((data) =>
     data.EPC?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     data.PID?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -610,12 +634,13 @@ export default function ScanGate() {
           />
         </div>
         {scanButton ? (
-          <button className="py-2 px-5 bg-green-500 rounded cursor-pointer" onClick={handleScan}>
-            Start
-          </button>
+          // <button className="py-2 px-5 bg-green-500 rounded cursor-pointer" onClick={handleScan}>
+          //   Start
+          // </button>
+        <div></div>
         ) : (
           <button className="py-2 px-5 bg-red-500 rounded cursor-pointer" onClick={handleStopScan}>
-            Stop
+            Refresh
           </button>
         )}
         <div className="p-4 flex justify-end">

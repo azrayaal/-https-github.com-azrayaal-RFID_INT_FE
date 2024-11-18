@@ -67,6 +67,8 @@
     EPC: string;
   weight: string;
   total: number;
+  type: string;
+movement_created_at: string;
   tag_status: string;
   sealNumber: string;
   packagesCount: number;

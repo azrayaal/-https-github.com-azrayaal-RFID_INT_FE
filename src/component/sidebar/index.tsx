@@ -32,6 +32,12 @@ export default function Sidebar() {
   const useScan = () => {
     navigate('/scan');
   };
+  const useReceiving = () => {
+    navigate('/receiving');
+  };
+  const useLoading = () => {
+    navigate('/loading');
+  };
   const useSetting = () => {
     navigate('/settings');
   };
@@ -82,7 +88,7 @@ export default function Sidebar() {
             {!isCollapsed && "Home"}
           </li>
 
-          {gate.map((item) => (
+          {/* {gate.map((item) => (
             <li
               key={item.id}
               className={`flex items-center p-3 mb-2 ${
@@ -95,8 +101,31 @@ export default function Sidebar() {
               </span>
               {!isCollapsed && item.gateName}
             </li>
-          ))}
+          ))} */}
 
+          <li
+            className={`flex items-center p-3 mb-2 ${
+              isActive(`/receiving`) || isActive(`/receiving/scan`) ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+            } rounded-r-full cursor-pointer`}
+            onClick={useReceiving}
+          >
+            <span className="mr-3">
+            <BiSolidArch className="text-orange-500 text-2xl" />
+            </span>
+            {!isCollapsed && "Receiving"}
+          </li>
+
+          <li
+            className={`flex items-center p-3 mb-2 ${
+              isActive("/loading") || isActive("/loading/scan") ? "bg-orenPos" : "hover:bg-orenPos hover:text-gray-200"
+            } rounded-r-full cursor-pointer`}
+            onClick={useLoading}
+          >
+            <span className="mr-3">
+            <BiSolidArch className="text-orange-500 text-2xl" />
+            </span>
+            {!isCollapsed && "Loading"}
+          </li>
           <li
             className={`flex items-center p-3 mb-2 ${
               isActive("/scan") ? "bg-orange-500" : "hover:bg-orange-500 hover:text-gray-200"
