@@ -30,12 +30,12 @@ export default function ScanTag() {
   return (
   <>
   <div className="grid grid-rows-1 grid-cols-3 grid-flow-col gap-4">
-    <div>
+    {/* <div>
         <Link to='/write'>
     <div  className="block max-w-sm p-6 bg-orange-500 hover:text-orange-500 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 text-white font-bold text-xl" >Write
 </div>
         </Link>
-    </div>
+    </div> */}
     <div>
     <Link to='/read'>
     <div className="block max-w-sm p-6 text-white bg-orenPos border border-gray-200 rounded-lg hover:text-orenPos shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 font-bold text-xl"> Read
@@ -50,7 +50,7 @@ export default function ScanTag() {
     </div>
 
   </div>
-    <div className="grid grid-rows-1 grid-cols-2 grid-flow-col py-5"> 
+    {/* <div className="grid grid-rows-1 grid-cols-2 grid-flow-col py-5"> 
 
    <Link to='/idletags'>
     <div  className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -62,7 +62,7 @@ export default function ScanTag() {
 <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">In use tags {totalInUseTags}</h5>
 </div>
   </Link>
-    </div>
+    </div> */}
     </>
   )
 }

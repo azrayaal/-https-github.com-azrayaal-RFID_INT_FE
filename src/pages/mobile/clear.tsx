@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { API_Header } from "../../libs";
 import { toast } from "react-toastify";
 import  Cookies  from 'js-cookie';
+import { Rings } from "react-loader-spinner";
 
 export default function ScanInbound() {
   const [receiving, setReceiving] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const tokenReader = Cookies.get("tokenReader");
   const readerIp = Cookies.get("readerIp");
@@ -28,10 +30,12 @@ export default function ScanInbound() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Server error:', errorData);
-        setScanButton(false);
+        setScanButton(true);
+        setIsLoading(false); // Hentikan loading
       } else {
         console.log('Scan command sent successfully');
         setScanButton(false);
+        setIsLoading(true);
       }
     } catch (error) {
       console.error('Error sending scan command:', error);
@@ -56,9 +60,14 @@ export default function ScanInbound() {
         console.log('Stop scan command sent successfully');
         setScanButton(true);
         setReceiving([]); // Clear the data in the table
+        setTimeout(() => {
+          setReceiving([]);
+        }, 500);
       }
     } catch (error) {
       console.error('Error sending Stop scan command:', error);
+    } finally {
+      setIsLoading(false); // Hentikan loading setelah berhenti
     }
   };
 
@@ -107,7 +116,7 @@ export default function ScanInbound() {
   
   
   
-  const getTag = async (epc: string) => {
+  const getTag = async(epc?: string): Promise<void> => {
     try {
       const res = await API_Header.post('/rfid-tags/read', { EPC: epc });
       if (res.data && res.data.data) {
@@ -118,28 +127,71 @@ export default function ScanInbound() {
     }
   };
 
-  useEffect(() => {
-    const ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
 
-    ws.onopen = () => console.log('Opened connection');
-    ws.onmessage = (event) => {
-      const data = event.data;
-      if (data instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === "string") processMessage(reader.result);
-        };
-        reader.readAsText(data);
-      } else {
-        processMessage(data);
+  useEffect(() => {
+    let ws : any;
+    let reconnectAttempts = 0;
+    const MAX_RECONNECT_ATTEMPTS = 5;
+  
+    const initializeWebSocket = () => {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        console.log('WebSocket already connected or connecting');
+        return;
+      }
+  
+      ws = new WebSocket(`wss://${readerIp}/ws?token=${tokenReader}`);
+  
+      ws.onopen = () => {
+        console.log('WebSocket connection opened');
+        reconnectAttempts = 0; // Reset attempts
+      };
+  
+      ws.onmessage = (event:any) => {
+        const data = event.data;
+  
+        if (data instanceof Blob) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            if (typeof reader.result === 'string') processMessage(reader.result);
+          };
+          reader.readAsText(data);
+        } else {
+          processMessage(data);
+        }
+      };
+  
+      ws.onerror = (error:any) => {
+        console.error('WebSocket error:', error);
+        handleStopScan();
+      };
+  
+      ws.onclose = (event:any) => {
+        console.log(`WebSocket closed: Code ${event.code}, Reason: ${event.reason}`);
+        if (event.code === 3003 && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+          reconnectAttempts++;
+          setIsLoading(false);
+          console.log(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+          setTimeout(() => {
+            initializeWebSocket();
+          }, 5000); // Reconnect delay
+        } else {
+          console.error('Max reconnect attempts reached or closed cleanly');
+          handleStopScan();
+          setReceiving([])
+          setIsLoading(false);
+        }
+      };
+    };
+  
+    initializeWebSocket();
+  
+    return () => {
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        ws.close();
       }
     };
-    ws.onerror = (error) => console.error('WebSocket error:', error);
-    ws.onclose = (event) => console.log(`Connection closed: Code ${event.code}, Reason: ${event.reason}`);
-
-    return () => ws.close();
-  }, []);
-
+  }, [readerIp, tokenReader]);
+  
   const processMessage = (message: string) => {
     try {
       const parsedData = JSON.parse(message);
@@ -161,6 +213,12 @@ export default function ScanInbound() {
     }
   };
 
+      // Call `getTag` immediately for testing
+      useEffect(() => {
+        // Jika tidak ada `epc`, pastikan memberikan nilai default atau argumen contoh
+        getTag(); // Ganti "default-epc" dengan nilai EPC tertentu jika diperlukan
+      }, []);
+
   const filteredReceiving = receiving.filter((data) =>
     data.EPC?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     data.PID?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -170,7 +228,7 @@ export default function ScanInbound() {
   );
 
   return (
-    <div className="min-h-screen p-8 bg-gray-300">
+    <div className="min-h-screen  bg-gray-300">
       
       <h1 className="text-3xl font-bold text-center pb-3">CLEAR TAG</h1>
       <div className="bg-gray-900 text-white rounded-t-lg p-4 flex justify-between items-center">
@@ -210,44 +268,54 @@ export default function ScanInbound() {
         <table className="w-full text-left table-auto border-collapse">
           <thead className="text-white bg-gray-900">
             <tr>
-              <th className="px-4 py-2 border border-gray-200">No</th>
-              <th className="px-4 py-2 border border-gray-200">EPC</th>
-              <th className="px-4 py-2 border border-gray-200">PID</th>
-              <th className="px-4 py-2 border border-gray-200">Item Name</th>
-              <th className="px-4 py-2 border border-gray-200">Weight</th>
-              <th className="px-4 py-2 border border-gray-200">Seal Number</th>
-              <th className="px-4 py-2 border border-gray-200">Quantity</th>
-              <th className="px-4 py-2 border border-gray-200">Item Description</th>
-              <th className="px-4 py-2 border border-gray-200">Location</th>
+            <th className="px-4 py-2 border border-gray-200">No</th>
+             <th className="px-4 py-2 border border-gray-200">Bag Id</th>
+              <th className="px-4 py-2 border border-gray-200">Type</th>
+              <th className="px-4 py-2 border border-gray-200">Bag Weight</th>
+              <th className="px-4 py-2 border border-gray-200">Total Package</th>
               <th className="px-4 py-2 border border-gray-200">Destination</th>
-              <th className="px-4 py-2 border border-gray-200">Updated By</th>
+              <th className="px-4 py-2 border border-gray-200">Scanned At</th>
             </tr>
           </thead>
           <tbody>
-            {filteredReceiving.map((data, index) => (
-              <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
-                <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.EPC}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.PID}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.item_name}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.weight}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.seal_number}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.quantity}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.item_description}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.location?.name} - {data.location?.address}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.destination?.name} - {data.destination?.address}</td>
-                <td className="px-4 py-2 border border-gray-500">{data.updated_by?.name} ({data.updated_by?.contact})</td>
-              </tr>
-            ))}
-            {filteredReceiving.length === 0 && (
-              <tr>
-                <td colSpan={11} className="py-8 text-center">
-                  <img src={nodata} alt="No Data" className="w-40 mb-4 mx-auto" />
-                  <span className="text-gray-500">No data found</span>
-                </td>
-              </tr>
-            )}
-          </tbody>
+  {filteredReceiving.map((data, index) => (
+    <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
+      <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.packagesCount}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.destination}</td>
+      <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.created_at}</td>
+    </tr>
+  ))}
+  {filteredReceiving.length === 0 && !isLoading && (
+    <tr>
+      <td colSpan={7} className="py-8 text-center">
+        <img src={nodata} alt="No Data" className="w-40 mb-4 mx-auto" />
+        <span className="text-gray-500">No data found</span>
+      </td>
+    </tr>
+  )}
+  {isLoading && filteredReceiving.length === 0 && (
+    <tr>
+      <td colSpan={7} className="py-8 text-center">
+        <div className="flex items-center justify-center flex-col">
+          <Rings
+            visible={true}
+            height={100}
+            width={100}
+            color="#1b2c5b"
+            ariaLabel="rings-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />
+          <span className="mt-4 text-gray-500">Scanning...</span>
+        </div>
+      </td>
+    </tr>
+  )}
+</tbody>
         </table>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { API_Header, API_NIPOS, userDataJWT } from "../../../libs";
 import  Cookies  from 'js-cookie';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS untuk Toastify
+import { Rings } from "react-loader-spinner";
 
 export default function ReceivingScan() {
   const [receiving, setReceiving] = useState<any[]>([]);
@@ -34,17 +35,18 @@ export default function ReceivingScan() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Server error:', errorData);
-        handleStopScan();
+        setScanButton(true);
+        setIsLoading(false); 
       } else {
         setScanButton(false);
+        setIsLoading(true); 
         toast.success('Scan started');
       }
     } catch (error) {
       console.error('Error starting scan:', error);
-    } finally {
+      setScanButton(true); 
       setIsLoading(false);
-    }
-  };
+  }};
   
 
   // Stop scanning and clear table
@@ -63,11 +65,14 @@ export default function ReceivingScan() {
         console.error('Server error:', errorData);
       } else {
         setScanButton(true);
-        setReceiving([]); // Clear the data in the table
-        // handleScan()
+        setTimeout(() => {
+          setReceiving([]);
+        }, 500);
       }
     } catch (error) {
       console.error('Error sending Stop scan command:', error);
+    } finally {
+      setIsLoading(false); // Hentikan loading setelah berhenti
     }
   };
 
@@ -122,7 +127,7 @@ export default function ReceivingScan() {
     }
   
     try {
-      const res = await API_Header.post("/rfid-tags/readGate", { EPC: epc });
+      const res = await API_Header.post("/rfid-tags/read", { EPC: epc });
       console.log(res)
       if (res.data && res.data.data) {
         setReceiving((prev) => {
@@ -153,6 +158,7 @@ export default function ReceivingScan() {
       ws.onopen = () => {
         console.log('WebSocket connection opened');
         reconnectAttempts = 0; // Reset attempts
+        setIsLoading(false);
       };
   
       ws.onmessage = (event:any) => {
@@ -178,6 +184,7 @@ export default function ReceivingScan() {
         console.log(`WebSocket closed: Code ${event.code}, Reason: ${event.reason}`);
         if (event.code === 3003 && reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
           reconnectAttempts++;
+          setIsLoading(false);
           console.log(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
           setTimeout(() => {
             initializeWebSocket();
@@ -185,6 +192,8 @@ export default function ReceivingScan() {
         } else {
           console.error('Max reconnect attempts reached or closed cleanly');
           handleStopScan();
+          setReceiving([]);
+          setIsLoading(false);
         }
       };
     };
@@ -286,7 +295,7 @@ export default function ReceivingScan() {
           <tbody>
             {filteredReceiving.map((data, index) => (
               <tr key={index} className={`text-center ${index % 2 === 0 ? "bg-gray-300" : "bg-white"}`}>
-                <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
+                     <td className="px-4 py-2 border border-gray-500">{index + 1}</td>
                 <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.PID}</td>
                 <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.type}</td>
                 <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.weight}</td>
@@ -295,13 +304,31 @@ export default function ReceivingScan() {
                 <td className="px-4 py-2 border-r border-l border-b border-gray-500">{data.created_at}</td>
               </tr>
             ))}
-            {filteredReceiving.length === 0 && (
+            {filteredReceiving.length === 0 && !isLoading && (
               <tr>
-                <td colSpan={11} className="py-8 text-center">
-                  <img src={nodata} alt="No Data" className="w-40 mb-4 mx-auto" />
-                  <span className="text-gray-500">No data found</span>
-                </td>
-              </tr>
+              <td colSpan={7} className="py-8 text-center">
+                <img src={nodata} alt="No Data" className="w-40 mb-4 mx-auto" />
+                <span className="text-gray-500">No data found</span>
+              </td>
+            </tr>
+          )}
+          {isLoading && filteredReceiving.length === 0 && (
+            <tr>
+              <td colSpan={7} className="py-8 text-center">
+                <div className="flex items-center justify-center flex-col">
+                  <Rings
+                    visible={true}
+                    height={100}
+                    width={100}
+                    color="#1b2c5b"
+                    ariaLabel="rings-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                  <span className="mt-4 text-gray-500">Scanning...</span>
+                </div>
+              </td>
+            </tr>
             )}
           </tbody>
         </table>
