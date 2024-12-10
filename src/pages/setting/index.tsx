@@ -1,13 +1,13 @@
 import Cookies from 'js-cookie';
-import React, { useEffect, useState } from 'react';
-import { API } from '../../libs';
+import  {  useState } from 'react';
+// import { API } from '../../libs';
 import { toast } from 'react-toastify';
 
 export default function Settings() {
   const [username, setUserName] = useState('admin');
   const [password, setPassword] = useState('!ReaderFX9600');
   const [readerIp, setReaderIp] = useState('169.254.10.1');
-  const [tokenReader, setTokenReader] = useState('');
+  // const [tokenReader, setTokenReader] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
 

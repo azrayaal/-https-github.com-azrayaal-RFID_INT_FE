@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import nodata from "../../../../public/nodata.png";
-import { useNavigate, useParams } from "react-router-dom";
-import { API_Header, API_NIPOS, userDataJWT } from "../../../libs";
+import { useNavigate } from "react-router-dom";
+import { API_Header } from "../../../libs";
 import  Cookies  from 'js-cookie';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS untuk Toastify
@@ -13,8 +13,8 @@ export default function ReceivingScan() {
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
   const navigate = useNavigate();
-  const [connoteResi, setConnoteResi] = useState(""); // State to hold connote_resi
-  const { id } = useParams();
+  // const [connoteResi, setConnoteResi] = useState(""); // State to hold connote_resi
+  // const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false)
 
   const tokenReader = Cookies.get("tokenReader");
@@ -127,7 +127,7 @@ export default function ReceivingScan() {
     }
   
     try {
-      const res = await API_Header.post("/rfid-tags/read", { EPC: epc });
+      const res = await API_Header.post("/rfid-tags/readGate", { EPC: epc });
       console.log(res)
       if (res.data && res.data.data) {
         setReceiving((prev) => {

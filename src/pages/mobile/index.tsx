@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom"
-import { API, API_Header } from "../../libs"
+import {  API_Header } from "../../libs"
 import { useEffect, useState } from "react"
 
 
 export default function ScanTag() {
-    const [totalIdleTags, setTotalIdleTags] = useState(0)
-    const [totalInUseTags, setTotalInUseTags] = useState(0)   
+    const [, setTotalIdleTags] = useState(0)
+    const [, setTotalInUseTags] = useState(0)   
     const getTotalIdleTags = async () => {
       try {
         const res = await API_Header.get('/rfid-tags/idle')

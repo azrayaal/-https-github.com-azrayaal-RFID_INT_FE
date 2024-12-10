@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { API, API_Header } from "../../libs";
+import {  API_Header } from "../../libs";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   const [totalIdleTags, setTotalIdleTags] = useState(0);
   const [totalInUseTags, setTotalInUseTags] = useState(0);
-  const [totalInbound, setTotalInbound] = useState(0);
-  const [totalOutbound, setTotalOutbound] = useState(0);
+  // const [totalInbound, setTotalInbound] = useState(0);
+  // const [totalOutbound, setTotalOutbound] = useState(0);
   const [currentDate, setCurrentDate] = useState('');
   const [currentTime, setCurrentTime] = useState('');
   const [gate, setGate] = useState([]);

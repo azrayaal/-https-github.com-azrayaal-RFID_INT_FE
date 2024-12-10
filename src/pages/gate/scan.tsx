@@ -340,7 +340,7 @@
 import { useEffect, useState } from "react";
 import nodata from "../../../public/nodata.png";
 import { useNavigate, useParams } from "react-router-dom";
-import { API_Header, API_NIPOS, userDataJWT } from "../../libs";
+import { API_Header } from "../../libs";
 import  Cookies  from 'js-cookie';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; // Import CSS untuk Toastify
@@ -351,7 +351,7 @@ export default function ScanGate() {
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
   const navigate = useNavigate();
-  const [connoteResi, setConnoteResi] = useState(""); // State to hold connote_resi
+  // const [connoteResi, setConnoteResi] = useState(""); // State to hold connote_resi
   const { id } = useParams();
 
   const tokenReader = Cookies.get("tokenReader");

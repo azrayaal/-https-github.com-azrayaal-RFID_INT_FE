@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import nodata from "../../../public/nodata.png";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { API_Header } from "../../libs";
 import  Cookies  from 'js-cookie';
 import { Rings } from "react-loader-spinner";
@@ -8,7 +8,6 @@ export default function ScanInbound() {
   const [receiving, setReceiving] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const tokenReader = Cookies.get("tokenReader");

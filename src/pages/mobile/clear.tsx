@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import nodata from "../../../public/nodata.png";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { API_Header } from "../../libs";
 import { toast } from "react-toastify";
 import  Cookies  from 'js-cookie';
@@ -10,7 +10,7 @@ export default function ScanInbound() {
   const [receiving, setReceiving] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [scanButton, setScanButton] = useState(true);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const tokenReader = Cookies.get("tokenReader");
@@ -75,7 +75,7 @@ export default function ScanInbound() {
   const clearTag = async (EPC: string) => {
     try {
       // Log the payload being sent to inspect the structure
-      console.log("Sending data to inbound:", { EPC });
+      console.log("Sending data to clear:", { EPC });
       
       const response = await API_Header.post('/rfid-tags/clear', { EPC });
       if (response.data.success) {
@@ -102,12 +102,12 @@ export default function ScanInbound() {
       );
   
       if (failedItems.length === 0) {
-        toast.success("All scanned data sent to inbound successfully!");
+        toast.success("All scanned data cleared!");
       } else {
         toast.error(`Some items failed to send: ${failedItems.join(", ")}.`);
       }
   
-      handleStopScan();
+      // handleStopScan();
       // navigate("/scan");
     } catch (error) {
       console.error("Error sending all data to inbound:", error);

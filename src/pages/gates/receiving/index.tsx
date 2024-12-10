@@ -22,7 +22,7 @@ export default function ReceivingGate() {
     navigate(`/receiving/scan`);
   };
 
-  const getData = async (id: any) => {
+  const getData = async () => {
     try {
       setGateName("");
       setDataMovement([]);
@@ -39,7 +39,7 @@ export default function ReceivingGate() {
   };
 
   useEffect(() => {
-    getData(id);
+    getData();
   }, [id, page, limit]); // Re-fetch data when id, page, or limit changes
 
   // Calculate total pages

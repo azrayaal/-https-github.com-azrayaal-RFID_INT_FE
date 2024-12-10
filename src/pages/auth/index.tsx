@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import logoPos from "../../assets/logo2.png";
 import { toast } from "react-toastify";

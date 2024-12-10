@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { API_Header, API_NIPOS } from '../../libs'; // Pastikan path ini sesuai dengan lokasi file API_Header Anda
 import { receiving } from '../../dataTypes';
@@ -6,29 +6,32 @@ import { receiving } from '../../dataTypes';
 export default function DetailMovement() {
   const { id } = useParams(); // Mendapatkan id dari parameter URL
   const [detail, setDetail] = useState<receiving>({
-  BagID: '',
-  PID: '',
-  EPC: '',
-  tag_status: '',
-  packagesCount: 0,
-  weight: '',
-  total: 0,
-  sealNumber: '',
-  receiver_name: '',
-  receiver_contact: '',
-  originLocation: '',
-  destination: '',
-  status: '',
-  service: '',
-  updated_at: '',
-  created_rfid_by: '',
-  currentLocation: '',
-  scanned_at: '',
-  created_at: '',
-  id: 0,
+    BagID: '',
+    PID: '',
+    EPC: '',
+    weight: '',
+    total: 0,
+    type: '',
+    movement_created_at: '',
+    tag_status: '',
+    sealNumber: '',
+    packagesCount: 0,
+    receiver_name: '',
+    receiver_contact: '',
+    originLocation: '',
+    destination: '',
+    status: '',
+    service: '',
+    updated_at: '',
+    created_rfid_by: '',
+    currentLocation: '',
+    scanned_at: '',
+    created_at: '',
+    id: 0,
   })
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null); ;
+  const [, setError] = useState<Error | null>(null); ;
 const [connoteDetail, setConnoteDetail] = useState<any>(null);    
   // Fungsi untuk mengambil detail inbound berdasarkan ID
   const fetchDetail = async () => {

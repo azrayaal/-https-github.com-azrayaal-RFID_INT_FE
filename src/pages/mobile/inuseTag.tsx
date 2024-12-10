@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API, API_Header } from '../../libs';
+import {  API_Header } from '../../libs';
 import { RfidTag } from '../../dataTypes';
 import nodata from "../../../public/nodata.png"
 

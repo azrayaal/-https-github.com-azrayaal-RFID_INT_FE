@@ -62,13 +62,13 @@
   // }
 
   export interface receiving {
-    BagID: string;
-    PID: string;
-    EPC: string;
+  BagID: string;
+  PID: string;
+  EPC: string;
   weight: string;
   total: number;
   type: string;
-movement_created_at: string;
+  movement_created_at: string;
   tag_status: string;
   sealNumber: string;
   packagesCount: number;

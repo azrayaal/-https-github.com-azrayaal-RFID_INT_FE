@@ -1,4 +1,3 @@
-import axios from "axios";
 import cookie from "cookie.js";
 import  { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";

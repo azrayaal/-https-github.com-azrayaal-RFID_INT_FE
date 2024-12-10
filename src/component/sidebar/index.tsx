@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaBox, FaDropbox, FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import {  FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
 import { AiFillHome } from "react-icons/ai";
-import { IoScanCircle,IoSettings } from "react-icons/io5";
+import { IoSettings } from "react-icons/io5";
 import { API_Header } from "../../libs";
-import { BiSolidArch } from "react-icons/bi";
-import { FcSettings } from "react-icons/fc";
 import { BsCaretDownSquareFill } from "react-icons/bs";
 import { BsCaretUpSquareFill } from "react-icons/bs";
 
@@ -20,7 +18,7 @@ type GateItem = {
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [gate, setGate] = useState<GateItem[]>([]);
+  const [, setGate] = useState<GateItem[]>([]);
   const location = useLocation();
 
   const toggleSidebar = () => {
